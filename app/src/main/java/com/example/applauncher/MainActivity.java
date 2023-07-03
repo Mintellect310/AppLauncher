@@ -33,7 +33,15 @@ public class MainActivity extends AppCompatActivity {
             "com.ubercab",
             "com.rapido.passenger",
             "com.adobe.scan.android",
-            "com.amazon.mShop.android.shopping"
+            "com.amazon.mShop.android.shopping",
+            "com.kms.free",
+            "com.sec.android.app.popupcalculator",
+            "com.sec.android.app.clockpackage",
+            "com.google.android.apps.docs",
+            "com.digilocker.android",
+            "com.sec.android.app.myfiles",
+            "com.google.android.gm",
+            "com.android.vending"
     };
 
     @Override
