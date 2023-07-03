@@ -3,18 +3,24 @@ package com.example.applauncher;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeMap;
 
 public class MainActivity extends AppCompatActivity {
@@ -33,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
             "com.ubercab",
             "com.rapido.passenger",
             "com.adobe.scan.android",
-            "com.amazon.mShop.android.shopping",
             "com.kms.free",
             "com.sec.android.app.popupcalculator",
             "com.sec.android.app.clockpackage",
@@ -43,6 +48,9 @@ public class MainActivity extends AppCompatActivity {
             "com.google.android.gm",
             "com.android.vending"
     };
+
+    private ListView appListView;
+    private List<ApplicationInfo> appInfoList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 ApplicationInfo appInfo = packageManager.getApplicationInfo(packageName, 0);
                 String appName = packageManager.getApplicationLabel(appInfo).toString();
+                Drawable appIcon = packageManager.getApplicationIcon(appInfo);
 
                 // Use the appName as needed
                 appNames[i] = appName;
@@ -65,15 +74,42 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        ListView appListView = findViewById(R.id.appListView);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1, appNames);
+        appListView = findViewById(R.id.appListView);
+        appInfoList = new ArrayList<>();
+        for (String packageName : APPS) {
+            try {
+                ApplicationInfo appInfo = packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA);
+                appInfoList.add(appInfo);
+            } catch (PackageManager.NameNotFoundException e) {
+                // Package not found, handle as needed
+                Toast.makeText(getApplicationContext(), packageName, Toast.LENGTH_SHORT).show();
+            }
+        }
+        ArrayAdapter<ApplicationInfo> adapter = new ArrayAdapter<ApplicationInfo>(this, R.layout.list_item_app, R.id.appNameTextView, appInfoList) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                ImageView appIconImageView = view.findViewById(R.id.appIconImageView);
+                TextView appNameTextView = view.findViewById(R.id.appNameTextView);
+
+                ApplicationInfo appInfo = appInfoList.get(position);
+                Drawable appIcon = packageManager.getApplicationIcon(appInfo);
+                String appName = packageManager.getApplicationLabel(appInfo).toString();
+
+                appIconImageView.setImageDrawable(appIcon);
+                appNameTextView.setText(appName);
+
+                return view;
+            }
+        };
+
 
         appListView.setAdapter(adapter);
         appListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                launchApp(APPS[position]);
+                String packageName = appInfoList.get(position).packageName;
+                launchApp(packageName);
             }
         });
     }

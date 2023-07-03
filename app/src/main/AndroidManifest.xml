@@ -36,7 +36,6 @@
         <package android:name="com.ubercab" />
         <package android:name="com.rapido.passenger" />
         <package android:name="com.adobe.scan.android" />
-        <package android:name="com.amazon.mShop.android.shopping" />
         <package android:name="com.kms.free" />
         <package android:name="com.sec.android.app.popupcalculator" />
         <package android:name="com.sec.android.app.clockpackage" />
